@@ -8,13 +8,16 @@
   "scripts": {
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "report": "tsx src/print-report.ts"
+    "report": "tsx src/print-report.ts",
+    "dev": "tsx src/serve-city.ts"
   },
   "dependencies": {
-    "garmin-connect-sdk": "^1.2.0"
+    "garmin-connect-sdk": "^1.2.0",
+    "pg": "^8.23.1"
   },
   "devDependencies": {
     "@types/node": "^24.7.0",
+    "@types/pg": "^8.23.1",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"

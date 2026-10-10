@@ -4,10 +4,83 @@ import {
   GarminMfaRequiredError,
 } from "garmin-connect-sdk";
 import type { ActivityRange, DataFetcher } from "../activity.js";
-import { createGarminDataFetcher } from "./garmin-data-fetcher.js";
+import type { DistrictRecordSource } from "../district-record.js";
+import { zoneTimes } from "./zone-times.js";
+import { createGarminDataFetcher, zonedActivity } from "./garmin-data-fetcher.js";
 
 export function createLiveGarminDataFetcher(env: NodeJS.ProcessEnv = process.env): DataFetcher {
   return createGarminDataFetcher(connectLister(env));
+}
+
+const historyPageSize = 100;
+const historyPageCap = 100;
+
+export function createLiveDistrictRecordSource(
+  env: NodeJS.ProcessEnv = process.env,
+): DistrictRecordSource {
+  return {
+    async fetchHistory() {
+      const garmin = await signedInClient(env);
+      const listed = await everyActivity(garmin);
+      return listed.map((item) => zonedActivity(item));
+    },
+    async fetchZoneTimes(id) {
+      const garmin = await signedInClient(env);
+      const listed = await findActivity(garmin, id);
+      return listed === undefined ? null : zoneTimes(listed);
+    },
+  };
+}
+
+async function everyActivity(garmin: GarminConnectSDK): Promise<unknown[]> {
+  const activities: unknown[] = [];
+  for (let page = 0; page < historyPageCap; page += 1) {
+    const batch = await garmin.activities.list({
+      start: page * historyPageSize,
+      limit: historyPageSize,
+      sortOrder: "desc",
+    });
+    activities.push(...batch);
+    if (batch.length < historyPageSize) {
+      return activities;
+    }
+  }
+  return activities;
+}
+
+async function findActivity(garmin: GarminConnectSDK, id: string): Promise<unknown | undefined> {
+  for (let page = 0; page < historyPageCap; page += 1) {
+    const batch = await garmin.activities.list({
+      start: page * historyPageSize,
+      limit: historyPageSize,
+      sortOrder: "desc",
+    });
+    const found = batch.find((item) => listedId(item) === id);
+    if (found !== undefined) {
+      return found;
+    }
+    if (batch.length < historyPageSize) {
+      return undefined;
+    }
+  }
+  return undefined;
+}
+
+function listedId(raw: unknown): string | undefined {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+    return undefined;
+  }
+  if (!("activityId" in raw)) {
+    return undefined;
+  }
+  const value = raw.activityId;
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return String(value);
+  }
+  if (typeof value === "string" && value.length > 0) {
+    return value;
+  }
+  return undefined;
 }
 
 function connectLister(env: NodeJS.ProcessEnv) {

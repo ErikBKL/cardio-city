@@ -10,6 +10,10 @@
 !**/*.js
 !**/*.mjs
 !**/*.cjs
+!**/*.html
+!**/*.md
+!**/*.mdc
+!**/docker-compose.yml
 !**/package.json
 !**/package-lock.json
 !**/tsconfig.json

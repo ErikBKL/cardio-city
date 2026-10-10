@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { UnrecognizedSportError } from "../src/activity.js";
-import { createGarminDataFetcher } from "../src/garmin/garmin-data-fetcher.js";
+import { createGarminDataFetcher, zonedActivity } from "../src/garmin/garmin-data-fetcher.js";
 
 const range = { since: "2026-10-01", until: "2026-10-07" };
 
@@ -63,12 +63,39 @@ test.each([
   ["indoor_cardio", "cardio"],
   ["hiit", "hiit"],
   ["triathlon", "multisport"],
+  ["multi_sport", "multisport"],
   ["duathlon", "multisport"],
   ["swimrun", "multisport"],
 ] as const)("%s becomes %s", async (typeKey, sport) => {
   const fetcher = createGarminDataFetcher(async () => [listed(typeKey)]);
   const activities = await fetcher.fetchActivities(range);
   expect(activities.map((activity) => activity.sport)).toEqual([sport]);
+});
+
+test("a listed run keeps its sport and its heart-rate seconds", () => {
+  expect(
+    zonedActivity({
+      activityId: 9,
+      activityName: "Easy",
+      startTimeLocal: "2026-01-01 08:00:00",
+      duration: 3600,
+      distance: 10000,
+      activityType: { typeKey: "running" },
+      hrTimeInZone_1: 5,
+      hrTimeInZone_2: 10,
+      hrTimeInZone_3: 80,
+      hrTimeInZone_4: 20,
+      hrTimeInZone_5: 0,
+    }),
+  ).toEqual({
+    id: "9",
+    name: "Easy",
+    localStart: "2026-01-01T08:00:00",
+    durationSeconds: 3600,
+    distanceMeters: 10000,
+    sport: "run",
+    zones: [5, 10, 80, 20, 0],
+  });
 });
 
 test("an unrecognized label rejects the fetch", async () => {

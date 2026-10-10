@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: postgres:16
+    ports:
+      - "54329:5432"
+    environment:
+      POSTGRES_USER: cardio
+      POSTGRES_PASSWORD: cardio
+      POSTGRES_DB: cardio_city

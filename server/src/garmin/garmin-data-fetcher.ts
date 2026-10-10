@@ -5,6 +5,8 @@ import {
   type DataFetcher,
   type Sport,
 } from "../activity.js";
+import type { ZoneTimes } from "../dominant-zone.js";
+import { zoneTimes } from "./zone-times.js";
 
 export function createGarminDataFetcher(
   list: (range: ActivityRange) => Promise<unknown[]>,
@@ -24,6 +26,10 @@ export function createGarminDataFetcher(
       return activities;
     },
   };
+}
+
+export function zonedActivity(raw: unknown): Activity & { zones: ZoneTimes | null } {
+  return { ...toActivity(raw), zones: zoneTimes(raw) };
 }
 
 function toActivity(raw: unknown): Activity {
@@ -66,6 +72,7 @@ const sports = {
   indoor_cardio: "cardio",
   hiit: "hiit",
   triathlon: "multisport",
+  multi_sport: "multisport",
   duathlon: "multisport",
   swimrun: "multisport",
 } as const satisfies Record<string, Sport>;

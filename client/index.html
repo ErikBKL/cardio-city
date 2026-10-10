@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cardio City</title>
+    <style>
+      html,
+      body,
+      #city {
+        margin: 0;
+        height: 100%;
+        background: #10141c;
+        color: #e7e1d6;
+        font-family: "Avenir Next", "Segoe UI", sans-serif;
+      }
+
+      #city {
+        overflow: hidden;
+      }
+
+      #city canvas {
+        display: block;
+      }
+
+      #status,
+      #legend {
+        position: fixed;
+        z-index: 1;
+        margin: 0;
+      }
+
+      #status {
+        top: 1.25rem;
+        left: 1.25rem;
+        max-width: 24rem;
+      }
+
+      #status[hidden] {
+        display: none;
+      }
+
+      #legend {
+        right: 1.25rem;
+        bottom: 1.25rem;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.4rem;
+      }
+
+      #legend li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      #legend i {
+        width: 0.75rem;
+        height: 0.75rem;
+        display: inline-block;
+      }
+
+      #record {
+        position: fixed;
+        z-index: 1;
+        top: 1.25rem;
+        left: 1.25rem;
+        width: min(22rem, calc(100% - 2.5rem));
+        max-height: calc(100% - 2.5rem);
+        overflow: auto;
+        margin: 0;
+        padding: 1rem 1.1rem 1.2rem;
+        background: rgb(16 20 28 / 0.92);
+        box-sizing: border-box;
+      }
+
+      #record[hidden] {
+        display: none;
+      }
+
+      #record-title {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        font-size: 1.35rem;
+        cursor: pointer;
+      }
+
+      #record-place {
+        margin: 0.2rem 0 0;
+        color: #b7c0ce;
+      }
+
+      #record-place[hidden],
+      #record-empty[hidden],
+      #record-summary[hidden] {
+        display: none;
+      }
+
+      #record-summary {
+        margin: 0.8rem 0 0;
+        display: grid;
+        gap: 0.25rem;
+      }
+
+      #record-summary p {
+        margin: 0;
+      }
+
+      #record-empty {
+        margin: 0.8rem 0 0;
+      }
+
+      #record-sessions {
+        margin: 0.9rem 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      #record-sessions button {
+        display: grid;
+        gap: 0.15rem;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      #record-sessions span {
+        color: #b7c0ce;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="status">Opening the city…</p>
+    <aside id="record" hidden>
+      <button id="record-title" type="button"></button>
+      <p id="record-place" hidden></p>
+      <div id="record-summary" hidden></div>
+      <p id="record-empty" hidden>Quiet these six weeks.</p>
+      <ol id="record-sessions"></ol>
+    </aside>
+    <ul id="legend"></ul>
+    <div id="city"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

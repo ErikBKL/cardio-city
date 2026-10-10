@@ -1,0 +1,29 @@
+# Ignore everything that is not source.
+*
+
+# Re-enter directories so the exceptions below can match.
+!*/
+
+# Application source.
+!**/*.ts
+!**/*.tsx
+!**/*.js
+!**/*.mjs
+!**/*.cjs
+!**/package.json
+!**/package-lock.json
+!**/tsconfig.json
+!**/tsconfig.*.json
+!.gitignore
+
+# Secrets, sessions, and dependencies. These stay ignored even when
+# they contain source-shaped files.
+node_modules/
+dist/
+.vite/
+.garmin-tokens/
+*.tsbuildinfo
+.env
+.env.*
+**/.env
+**/.env.*
